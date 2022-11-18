@@ -1,11 +1,18 @@
-name: 'Shave The Yak'
+name: Pause Community Contributions
 
 on:
+  push:
   issues:
-    types: [opened]
+    types:
+      - opened
+  pull_request:
+    types:
+      - opened
+  workflow_dispatch:
 
 jobs:
-  shave:
+  pause:
+    name: Pause Community Contributions
     runs-on: ubuntu-latest
     steps:
       - name: Detect if user is org member
@@ -13,21 +20,15 @@ jobs:
         id: is-organization-member
         with:
           script: |
-            if (context.actor == 'dependabot' ||
-                context.actor == 'exercism-bot' ||
-                context.actor == 'github-actions[bot]') {
+            if (context.actor == 'dependabot' || context.actor == 'exercism-bot' || context.actor == 'github-actions[bot]') {
               return false;
             }
 
-            try {
-              const response = await github.rest.orgs.checkMembershipForUser({
-                org: "exercism",
-                username: context.actor,
-              });
-              return response.status == 204
-            } catch {
-              return false
-            }
+            return github.rest.orgs.checkMembershipForUser({
+              org: "exercism",
+              username: context.actor,
+            }).then(response => response.status == 204)
+              .catch(err => false);
       - name: Handle not a member
         if: steps.is-organization-member.outputs.result == 'false'
         run: echo "Not a member"
