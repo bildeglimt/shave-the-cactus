@@ -10,11 +10,6 @@ on:
 
 jobs:
   pause:
-    name: 'Test Workflow'
+    name: Get Username
     runs-on: ubuntu-latest
-    steps:
-      - name: Get Username
-        id: get-username
-        uses: actions/github-script@d556feaca394842dc55e4734bf3bb9f685482fa0
-        with:
-          run: echo "${{github.event.sender.login}}"
+    run: echo "${{github.event.sender.login}}"
