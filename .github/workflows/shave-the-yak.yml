@@ -8,7 +8,10 @@ jobs:
   shave:
     runs-on: ubuntu-latest
     steps:
-      - name: Get Username
-        run: echo "${{github.event.sender.login}}"
-      - name: Get ID
-        run: echo "${{github.event.sender.id}}"
+      - uses: actions/github-script@v6
+        id: set-result
+        with:
+          script: return "Hello!"
+          result-encoding: string
+      - name: Get result
+        run: echo "${{steps.set-result.outputs.result}}"
