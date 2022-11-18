@@ -29,9 +29,25 @@ jobs:
               username: context.actor,
             }).then(response => response.status == 204)
               .catch(err => false);
-      - name: Handle not a member
+      - name: Comment
         if: steps.is-organization-member.outputs.result == 'false'
-        run: echo "Not a member"
-      - name: Handle member
-        if: steps.is-organization-member.outputs.result == 'true'
-        run: echo "Is a member"
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'ISSUE_COMMENT_BODY'
+            })
+      - name: Close
+        if: steps.is-organization-member.outputs.result == 'false'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            octokit.rest.issues.update({
+              context.repo.owner,
+              contex.repo.repo,
+              context.issue.number,
+              state: "closed",
+            });
