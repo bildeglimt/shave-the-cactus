@@ -2,14 +2,11 @@ name: 'Shave The Yak'
 
 on:
   issues:
-    types:
-      - opened
-  pull_request:
-    types:
-      - opened
+    types: [opened]
 
 jobs:
-  pause:
-    name: Get Username
+  shave:
     runs-on: ubuntu-latest
-    run: echo "${{github.event.sender.login}}"
+    steps:
+      - name: Get Username
+        run: echo "${{github.event.sender.login}}"
