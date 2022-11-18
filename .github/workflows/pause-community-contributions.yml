@@ -18,8 +18,8 @@ jobs:
         id: is-organization-member
         uses: JamesSingleton/is-organization-member@fb5924a6287762ee5fc71bf9e95a60842af5528d
         with:
-          organization: exercism
-          username: ${{ github.event.actor.login }}
+          organization: spiky-yak
+          username: kytrinyx
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Close Issue A
         if: steps.is-organization-member.outputs.result == false
