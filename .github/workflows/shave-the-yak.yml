@@ -14,7 +14,7 @@ jobs:
           script: |
             const result = github.rest.orgs.checkMembershipForUser({
               org: "spiky-yak",
-              username: ${{ github.event.sender.login }},
+              username: "${{ github.event.sender.login }}",
             });
             if (result.status == 204) {
               return "ok";
