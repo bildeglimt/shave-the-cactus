@@ -10,3 +10,14 @@ jobs:
     steps:
       - name: Get Username
         run: echo "${{github.event.sender.login}}"
+      - name: Check membership
+        id: check-membership
+        - uses: actions/github-script@v6
+          with:
+            script: |
+              github.rest.orgs.checkMembershipForUser({
+                "spiky-yak",
+                ${{ github.event.sender.login }},
+              })
+      - name: Membership Check Result
+        run: echo "${{steps.check-membership.outputs.result}}"
