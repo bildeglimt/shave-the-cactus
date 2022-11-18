@@ -9,9 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@v6
-        id: set-result
+        id: check-membership
         with:
-          script: return "Hello!"
-          result-encoding: string
+          script: |
+            const result = github.rest.orgs.checkMembershipForUser({
+              "spiky-yak",
+              ${{ github.event.sender.login }},
+            });
+            if (result.status == 204) {
+              return "ok";
+            }
       - name: Get result
-        run: echo "${{steps.set-result.outputs.result}}"
+        run: echo "${{steps.check-membership.outputs.result}}"
