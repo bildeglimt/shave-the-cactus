@@ -50,4 +50,4 @@ jobs:
               context.repo.repo,
               context.issue.number,
               state: "closed",
-            });
+            })
