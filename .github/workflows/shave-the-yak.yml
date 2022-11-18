@@ -47,7 +47,7 @@ jobs:
           script: |
             octokit.rest.issues.update({
               context.repo.owner,
-              contex.repo.repo,
+              context.repo.repo,
               context.issue.number,
               state: "closed",
             });
