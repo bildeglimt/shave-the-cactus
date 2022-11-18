@@ -1,0 +1,37 @@
+name: 'Pause Community Contributions'
+
+on:
+  issues:
+    types:
+      - opened
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  pause:
+    name: 'Pause Community Contributions'
+    runs-on: ubuntu-latest
+    if: github.event.actor.login != 'dependabot' && github.event.actor.login != 'exercism-bot' && github.event.actor.login != 'github-actions[bot]'
+    steps:
+      - name: Is Organization Member
+        id: is-organization-member
+        uses: JamesSingleton/is-organization-member@fb5924a6287762ee5fc71bf9e95a60842af5528d
+        with:
+          organization: exercism
+          username: ${{ github.event.actor.login }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Close Issue A
+        if: steps.is-organization-member.outputs.result == false
+        uses: peter-evans/close-issue@1373cadf1f0c96c1420bc000cfba2273ea307fd1
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          comment: "Test result: you have not been identified as an organization member."
+      - name: Close Issue B
+        if: steps.is-organization-member.outputs.result == true
+        uses: peter-evans/close-issue@1373cadf1f0c96c1420bc000cfba2273ea307fd1
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          comment: "Test result: you have been identified as an organization member! Yay."
