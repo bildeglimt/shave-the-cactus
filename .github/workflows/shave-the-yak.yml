@@ -8,16 +8,29 @@ jobs:
   shave:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v6
-        id: check-membership
+      - name: Detect if user is org member
+        uses: actions/github-script@d556feaca394842dc55e4734bf3bb9f685482fa0
+        id: is-organization-member
         with:
           script: |
-            const result = github.rest.orgs.checkMembershipForUser({
-              org: "spiky-yak",
-              username: "${{ github.event.sender.login }}",
-            });
-            if (result.status == 204) {
-              return "ok";
+            if (context.actor == 'dependabot' ||
+                context.actor == 'exercism-bot' ||
+                context.actor == 'github-actions[bot]') {
+              return false;
             }
-      - name: Get result
-        run: echo "${{steps.check-membership.outputs.result}}"
+
+            try {
+              const response = await github.rest.orgs.checkMembershipForUser({
+                org: "exercism",
+                username: context.actor,
+              });
+              return response.status == 204
+            } catch {
+              return false
+            }
+      - name: Handle not a member
+        if: steps.is-organization-member.outputs.result == 'false'
+        run: echo "Not a member"
+      - name: Handle member
+        if: steps.is-organization-member.outputs.result == 'true'
+        run: echo "Is a member"
